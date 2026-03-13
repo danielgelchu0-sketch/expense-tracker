@@ -33,20 +33,25 @@
                 <th>Description</th>
                 <th>Amount ($)</th>
             </tr>
-        </thead>
-        <tbody>
-            {% for expense in expenses %}
-            <tr>
-                <td>{{ expense['date'] }}</td>
-                <td>{{ expense['description'] }}</td>
-                <td>{{ expense['amount'] }}</td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="3">No expenses recorded yet.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+       <tbody>
+    {% for expense in expenses %}
+    <tr>
+        <td>{{ expense['date'] }}</td>
+        <td>{{ expense['description'] }}</td>
+        <td>{{ expense['amount'] }}</td>
+        <td>
+            <form action="/delete/{{ expense['id'] }}" method="POST" style="display:inline;">
+                <button type="submit" style="background:#dc3545; padding:0.25rem 0.75rem;" 
+                        onclick="return confirm('Delete this expense?')">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <td colspan="4">No expenses recorded yet.</td>
+    </tr>
+    {% endfor %}
+</tbody>
     </table>
 </body>
 </html>
