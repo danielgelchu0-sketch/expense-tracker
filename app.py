@@ -1,13 +1,17 @@
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
-from datetime import datetime
+import os
 
 app = Flask(__name__)
-DATABASE = 'expenses.db'
+# WARNING: Replace with environment variable in production
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+DATABASE = os.path.join(basedir, 'expenses.db')
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row  # Allows accessing columns by name
+    conn.row_factory = sqlite3.Row
     return conn
 
 @app.route('/')
@@ -61,14 +65,4 @@ def edit_expense(id):
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
-    app.run(debug=True)
-
-
-
-@app.route('/delete/<int:id>', methods=['POST'])
-def delete_expense(id):
-    conn = get_db_connection()
-    conn.execute('DELETE FROM expenses WHERE id = ?', (id,))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('home'))
+    app.run(debug=False)
