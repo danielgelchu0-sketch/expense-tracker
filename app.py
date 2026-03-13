@@ -38,6 +38,28 @@ def delete_expense(id):
     conn.close()
     return redirect(url_for('home'))
 
+@app.route('/edit/<int:id>', methods=['GET'])
+def edit_expense_form(id):
+    conn = get_db_connection()
+    expense = conn.execute('SELECT * FROM expenses WHERE id = ?', (id,)).fetchone()
+    conn.close()
+    if expense is None:
+        return "Expense not found", 404
+    return render_template('edit.html', expense=expense)
+
+@app.route('/edit/<int:id>', methods=['POST'])
+def edit_expense(id):
+    date = request.form['date']
+    description = request.form['description']
+    amount = request.form['amount']
+    
+    conn = get_db_connection()
+    conn.execute('UPDATE expenses SET date = ?, description = ?, amount = ? WHERE id = ?',
+                 (date, description, amount, id))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('home'))
+
 if __name__ == '__main__':
     app.run(debug=True)
 
